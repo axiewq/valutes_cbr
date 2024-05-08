@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from utils import get_historical_data, plot_historical_data, convert_currencies
+from utils import get_historical_data, plot_historical_data, convert_currencies, predict_currency_rate
 
 class CurrencyApp(tk.Tk):
     def __init__(self):
@@ -26,6 +26,32 @@ class CurrencyApp(tk.Tk):
         self.tab_convert = ttk.Frame(self.tabs)
         self.tabs.add(self.tab_convert, text="Конвертер")
         self.create_convert_tab()
+
+        # Вкладка "Прогноз курса"
+        self.tab_predict = ttk.Frame(self.tabs)
+        self.tabs.add(self.tab_predict, text="Прогноз курса")
+        self.create_predict_tab()
+
+    def create_predict_tab(self):
+        currency_label = ttk.Label(self.tab_predict, text="Валюта:")
+        currency_label.grid(row=0, column=0, padx=5, pady=5)
+        self.currency_entry = ttk.Entry(self.tab_predict)
+        self.currency_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        predict_button = ttk.Button(self.tab_predict, text="Прогноз курса", command=self.predict_rate)
+        predict_button.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+
+        self.prediction_label = ttk.Label(self.tab_predict, text="")
+        self.prediction_label.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+    def predict_rate(self):
+        currency = self.currency_entry.get().upper()
+        try:
+            prediction = predict_currency_rate(currency)
+            self.prediction_label.config(text=prediction)
+        except Exception as e:
+            self.prediction_label.config(text=str(e))
+
 
     def create_get_data_tab(self):
         start_date_label = ttk.Label(self.tab_get_data, text="Начальная дата (ГГГГ-ММ-ДД):")

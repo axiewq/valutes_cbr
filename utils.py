@@ -2,6 +2,33 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+
+def predict_currency_rate(currency):
+    # Получаем текущую дату
+    today = datetime.now().date()
+
+    # Получаем данные за последние 72 часа
+    start_date = (today - timedelta(days=3)).strftime('%Y-%m-%d')
+    end_date = today.strftime('%Y-%m-%d')
+    data = get_historical_data(start_date, end_date, currency)
+
+    # Преобразуем данные в формат для линейной регрессии
+    dates = list(map(lambda x: datetime.strptime(x, '%d.%m.%Y'), data.keys()))
+    values = list(data.values())
+    X = [[i] for i in range(len(dates))]  # Создаем список из индексов дней
+
+    # Обучаем модель линейной регрессии
+    model = LinearRegression()
+    model.fit(X, values)
+
+    # Прогнозируем значение на следующий день
+    next_day = today + timedelta(days=1)
+    next_day_index = len(dates)
+    predicted_value = model.predict([[next_day_index]])
+
+    return f"Прогнозируемый курс {currency} на {next_day.strftime('%d.%m.%Y')}: {predicted_value[0]:.4f}"
 
 def get_historical_data(start_date, end_date, currency):
     start_date = datetime.strptime(start_date, '%Y-%m-%d')
@@ -67,3 +94,4 @@ def convert_currencies(from_currency, to_currency): #Конвертер валю
 
     else:
         return "Ошибка: одна или обе валюты не найдены."
+
