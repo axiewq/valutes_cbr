@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "valutes-cbr"
+version = "0.1.0"
+description = ""
+authors = ["Max <kocmos2048@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
